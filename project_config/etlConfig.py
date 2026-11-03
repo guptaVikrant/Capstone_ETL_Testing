@@ -1,0 +1,16 @@
+
+
+
+# Oracle Database connection
+ORACLE_USER="system"
+ORACLE_PASSWORD="Radha@150683"
+ORACLE_HOST="127.0.0.1"
+ORACLE_PORT=1521
+ORACLE_SERVICE="XEPDB1"
+
+# MySQL Database connection
+MYSQL_USER="root"
+MYSQL_PASSWORD="Radha%40150683"
+MYSQL_HOST="localhost"
+MYSQL_PORT=3306
+MYSQL_DATABASE="QA_Sol_Project"
