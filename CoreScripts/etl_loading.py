@@ -19,6 +19,9 @@ class DataLoader:
         loading_monthly_sales_details()
         logger.info("Data loading monthly_sales_report table completed ...")
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
 dl1 = DataLoader()
-dl1.load_fact_sales_table()
+    #dl1.load_fact_sales_table()
+#dl1.load_fact_inventory_table()
+#dl1.load_inventory_levels_by_store_table()
+dl1.load_monthly_sales_report_table()

@@ -23,8 +23,9 @@ logger = logging.getLogger(__name__)
 filter_query = """select * from stage_sales where sale_date>01-09-2026"""
 router1_query="""select * from stage_sales where region='high'"""
 router2_query="""select * from stage_sales where region='low'"""
-aggr_query="""select product_id, year(sale_date) as SalesYear, month(sale_date) as SalesMonth, 
-                sum(quantity*price) as Total_Sales from filtered_sales group by product_id, year(sale_date), month(sale_date)"""
+aggr_query=text("""select product_id, year(STR_TO_DATE(sale_date, '%d-%m-%Y')) as SalesYear, month(STR_TO_DATE(sale_date, '%d-%m-%Y')) as SalesMonth, 
+                sum(quantity*price) as Total_Sales from filtered_sales 
+                group by product_id,  SalesYear, SalesMonth""")
 joiner_query="""select  fs.sales_id,fs.quantity,fs.price,fs.quantity * fs.price as sales_amount,fs.sale_date,
                 sp.product_id,sp.product_name, ss.store_id,ss.store_name 
                 from filtered_sales fs inner join stage_product sp on fs.product_id=sp.product_id 
@@ -37,11 +38,11 @@ factSalesQuery=text("""INSERT INTO fact_sales (sales_id,product_id,store_id,quan
                   SELECT sales_id,product_id,store_id, quantity,sales_amount,STR_TO_DATE(sale_date, '%d-%m-%Y') 
                    FROM sales_with_details""")
 factInventoryQuery=text("""insert into fact_inventory(product_id,  store_id, quantity_on_hand, last_updated)
-select product_id,  store_id, quantity_on_hand, last_updated from stage_inventory""")
-monthlySalesQuery=text("""insert into fact_inventory(product_id,  store_id, quantity_on_hand, last_updated)
-select product_id,  store_id, quantity_on_hand, last_updated from stage_inventory""")
-inventoryByStoreQuery=text("""insert into fact_inventory(product_id,  store_id, quantity_on_hand, last_updated)
-select product_id,  store_id, quantity_on_hand, last_updated from stage_inventory""")
+                            select product_id,  store_id, quantity_on_hand, last_updated from stage_inventory""")
+monthlySalesQuery=text("""insert into monthly_sales_report(product_id, month, year, total_sales)
+                            select product_id, SalesYear, SalesMonth, Total_Sales from monthly_sales_summary""")
+inventoryByStoreQuery=text("""insert into inventory_levels_by_store(store_id, total_inventory)
+                            select store_id, total_product from inventory_level""")
 # -------------------------Loading--------------------------------
 def loading_fact_sales():
     with mysql_conn.connect() as conn:
@@ -51,24 +52,24 @@ def loading_fact_sales():
     logger.info("table has been loaded successfully....")
 
 def loading_monthly_sales_details():
-    with mysql_conn.connect() as conn:
+    with mysql_conn.connect() as conn1:
         logger.info(monthlySalesQuery)
-        conn.execute(monthlySalesQuery)
-        conn.commit()
+        conn1.execute(monthlySalesQuery)
+        conn1.commit()
     logger.info("table has been loaded successfully....")
 
 def loading_inventory():
-    with mysql_conn.connect() as conn:
+    with mysql_conn.connect() as conn2:
         logger.info(factInventoryQuery)
-        conn.execute(factInventoryQuery)
-        conn.commit()
+        conn2.execute(factInventoryQuery)
+        conn2.commit()
     logger.info("table has been loaded successfully....")
 
 def loading_inventory_level_by_store():
-    with mysql_conn.connect() as conn:
+    with mysql_conn.connect() as conn3:
         logger.info(inventoryByStoreQuery)
-        conn.execute(inventoryByStoreQuery)
-        conn.commit()
+        conn3.execute(inventoryByStoreQuery)
+        conn3.commit()
     logger.info("table has been loaded successfully....")
 # -------------------------Transformation--------------------------------
 def filter_from_sales():
