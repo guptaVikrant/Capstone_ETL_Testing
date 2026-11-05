@@ -34,20 +34,20 @@ print("MySQL engine created successfully")
 '''
 class DataExtraction:
     def extract_read_product_data_and_write_to_staging(self, file_path, file_type, table_name):
-        print("Data extraction process started ......")
+        logger.info("Data extraction process started ......")
         read_from_file_to_sql(file_path, file_type, table_name)
        # df.to_sql(table_name, mysql_conn, index=False, if_exists="replace")
-        print("Data extraction process of Product file has completed... ")
+        logger.info("Data extraction process of Product file has completed... ")
 
     def extract_read_inventory_XML_data_and_write_to_staging(self, file_path, file_type, table_name):
-        print("Data extraction process started from Inventory data....")
+        logger.info("Data extraction process started from Inventory data....")
         read_from_file_to_sql(file_path, file_type, table_name)
-        print("Data extraction process of Inventory data has completed... ")
+        logger.info("Data extraction process of Inventory data has completed... ")
 
     def extract_read_supplier_json_data_and_write_to_staging(self, file_path, file_type, table_name):
-        print("Data extraction process started from supplier_data....")
+        logger.info("Data extraction process started from supplier_data....")
         read_from_file_to_sql(file_path, file_type, table_name)
-        print("Data extraction process of supplier_data has completed... ")
+        logger.info("Data extraction process of supplier_data has completed... ")
     '''
     def extract_read_sales_data_from_file_and_write_to_staging_mysql(self, bucket_name,file_key):
         print("Data extraction process started from Sales S3 data....")
@@ -56,14 +56,14 @@ class DataExtraction:
    '''
 
     def extract_read_sales_data_and_write_to_staging_staging(self, file_path, file_type, table_name):
-        print("Data extraction process started from Sales data....")
+        logger.info("Data extraction process started from Sales data....")
         read_from_file_to_sql(file_path, file_type, table_name)
-        print("Data extraction process of sales_data has completed... ")
+        logger.info("Data extraction process of sales_data has completed... ")
 
     def extract_read_stores_data_oracle_and_write_to_staging(self, file_path, file_type, table_name):
-        print("Data extraction process started from Stores oracle data....")
+        logger.info("Data extraction process started from Stores oracle data....")
         read_from_oracle_to_sql(file_path, file_type, table_name)
-        print("Data extraction process of stores_data has completed... ")
+        logger.info("Data extraction process of stores_data has completed... ")
 
 de1=DataExtraction()
 de1.extract_read_product_data_and_write_to_staging("Source_System/product_data.csv", "csv", "stage_product")
